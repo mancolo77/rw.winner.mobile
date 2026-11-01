@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screens/splash_screen.dart';
-import 'services/local_notification_service.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
@@ -15,12 +14,6 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
-
-  try {
-    await LocalNotificationService.instance.initialize(
-      requestPermissionOnInit: false,
-    );
-  } catch (_) {}
 
   runApp(const MainApp());
 }
