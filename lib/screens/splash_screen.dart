@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../services/flagsmith_service.dart';
+import '../services/rwanda_match_service.dart';
 import '../theme/app_theme.dart';
 import 'main_navigation_screen.dart';
 import 'webview_screen.dart';
@@ -78,6 +79,10 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _initApp() async {
     final stopwatch = Stopwatch()..start();
     String? webviewUrl;
+
+    try {
+      await RwandaMatchService().init();
+    } catch (_) {}
 
     try {
       // Fetch target URL based on IP GEO & Flagsmith config (strict 1.2s timeout)
