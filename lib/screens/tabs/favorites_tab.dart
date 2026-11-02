@@ -44,183 +44,138 @@ class _FavoritesTabState extends State<FavoritesTab> {
 
     final isEmpty = favMatches.isEmpty && favTeams.isEmpty;
 
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(AppTheme.screenPadding, 16, AppTheme.screenPadding, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Favorites',
-            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppTheme.textMain),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Followed Rwanda teams and bookmarked matches',
-            style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
-          ),
-          const SizedBox(height: 16),
-
-          if (isEmpty)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(28),
-              decoration: BoxDecoration(
-                color: AppTheme.surfaceCard,
-                borderRadius: BorderRadius.circular(AppTheme.cardRadius),
-                border: Border.all(color: AppTheme.border),
-              ),
-              child: const Center(
-                child: Column(
+    return Scaffold(
+      backgroundColor: AppTheme.background,
+      appBar: AppBar(
+        backgroundColor: AppTheme.darkNav,
+        elevation: 0,
+        title: const Text('My Favorites', style: TextStyle(color: AppTheme.textMain, fontSize: 19, fontWeight: FontWeight.bold)),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppTheme.screenPadding),
+        child: isEmpty
+            ? Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: AppTheme.surfaceCard,
+                  borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+                ),
+                child: const Column(
                   children: [
-                    Icon(Icons.star_border_rounded, size: 48, color: AppTheme.textSecondary),
-                    SizedBox(height: 10),
+                    Icon(Icons.star_outline_rounded, size: 54, color: AppTheme.textSecondary),
+                    SizedBox(height: 14),
                     Text(
-                      'No favorites added yet',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textMain, fontSize: 15),
+                      'No Favorites Saved',
+                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 4),
+                    SizedBox(height: 8),
                     Text(
-                      'Tap the star icon on any match or team to add it here',
+                      'Tap the star icon on any match or club to follow their schedule here.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                      style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
                     ),
                   ],
                 ),
-              ),
-            )
-          else ...[
-            // Followed Teams section
-            if (favTeams.isNotEmpty) ...[
-              const Text(
-                'Followed Teams',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textMain),
-              ),
-              const SizedBox(height: 10),
-              ...favTeams.map((t) => Card(
-                    color: AppTheme.surfaceCard,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.cardRadius)),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Followed Clubs Carousel
+                  if (favTeams.isNotEmpty) ...[
+                    const Text('Followed Clubs', style: TextStyle(color: AppTheme.textMain, fontSize: 17, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: AppTheme.filterBg,
-                            radius: 18,
-                            child: Text(
-                              t.name.substring(0, 1),
-                              style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold),
+                        children: favTeams.map((t) {
+                          return Container(
+                            width: 120,
+                            margin: const EdgeInsets.only(right: 12),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppTheme.surfaceCard,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppTheme.border.withValues(alpha: 0.4)),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: AppTheme.primary,
+                                  child: Text(t.name.substring(0, 1), style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.buttonTextDark)),
+                                ),
+                                const SizedBox(height: 8),
                                 Text(
                                   t.name,
-                                  style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textMain, fontSize: 15),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(color: AppTheme.textMain, fontWeight: FontWeight.bold, fontSize: 12),
                                 ),
+                                const SizedBox(height: 2),
                                 Text(
-                                  '${t.city} • ${t.stadium}',
-                                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                                  t.city,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10),
                                 ),
                               ],
                             ),
-                          ),
-                          IconButton(
-                            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-                            icon: const Icon(Icons.star_rounded, color: AppTheme.primary, size: 22),
-                            onPressed: () => _service.toggleFavoriteTeam(t.id),
-                          ),
-                        ],
+                          );
+                        }).toList(),
                       ),
                     ),
-                  )),
-              const SizedBox(height: 18),
-            ],
+                    const SizedBox(height: 22),
+                  ],
 
-            // Saved Matches grouped by Date
-            if (favMatches.isNotEmpty) ...[
-              const Text(
-                'Saved Matches',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textMain),
-              ),
-              const SizedBox(height: 10),
-              ...matchesByDate.entries.map((entry) {
-                final date = entry.key;
-                final list = entry.value;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppTheme.filterBg,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        date,
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.primary),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ...list.map((m) => Card(
-                          color: AppTheme.surfaceCard,
-                          margin: const EdgeInsets.only(bottom: 10),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.cardRadius)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(14),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                  // Saved Matches Grouped by Date
+                  if (matchesByDate.isNotEmpty) ...[
+                    const Text('Bookmarked Matches', style: TextStyle(color: AppTheme.textMain, fontSize: 17, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    ...matchesByDate.entries.map((entry) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            margin: const EdgeInsets.only(top: 6, bottom: 8),
+                            decoration: BoxDecoration(
+                              color: AppTheme.filterBg,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              entry.key,
+                              style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold, fontSize: 12),
+                            ),
+                          ),
+                          ...entry.value.map((m) => Card(
+                                color: AppTheme.surfaceCard,
+                                margin: const EdgeInsets.only(bottom: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+                                  side: BorderSide(color: AppTheme.border.withValues(alpha: 0.4)),
+                                ),
+                                child: ListTile(
+                                  title: Text('${m.teamA} vs ${m.teamB}', style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textMain, fontSize: 14)),
+                                  subtitle: Text('${m.tournament} • ${m.time}', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
-                                        m.tournament,
-                                        style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '${m.teamA} vs ${m.teamB}',
-                                        style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textMain, fontSize: 14),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        '${m.time} • ${m.stadium}',
-                                        style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+                                      Text(m.score ?? m.status, style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold, fontSize: 13)),
+                                      IconButton(
+                                        icon: const Icon(Icons.star_rounded, color: AppTheme.primary),
+                                        onPressed: () => _service.toggleFavoriteMatch(m.id),
                                       ),
                                     ],
                                   ),
                                 ),
-                                if (m.score != null)
-                                  Container(
-                                    margin: const EdgeInsets.only(right: 8),
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(color: AppTheme.filterBg, borderRadius: BorderRadius.circular(6)),
-                                    child: Text(
-                                      m.score!,
-                                      style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold, fontSize: 13),
-                                    ),
-                                  ),
-                                IconButton(
-                                  constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-                                  icon: const Icon(Icons.star_rounded, color: AppTheme.primary, size: 22),
-                                  onPressed: () => _service.toggleFavoriteMatch(m.id),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )),
-                    const SizedBox(height: 10),
+                              )),
+                        ],
+                      );
+                    }),
                   ],
-                );
-              }),
-            ],
-          ],
-        ],
+                ],
+              ),
       ),
     );
   }

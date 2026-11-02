@@ -32,11 +32,11 @@ void main() {
     // Switch to Teams
     await tester.tap(find.descendant(of: navFinder, matching: find.text('Teams')));
     await tester.pumpAndSettle();
-    expect(find.text('Clubs of the Rwanda Premier League'), findsOneWidget);
+    expect(find.text('Rwanda Football Clubs'), findsOneWidget);
 
     // Switch to Favorites
     await tester.tap(find.descendant(of: navFinder, matching: find.text('Favorites')));
     await tester.pumpAndSettle();
-    expect(find.text('Followed Rwanda teams and bookmarked matches'), findsOneWidget);
+    expect(find.text('My Favorites'), findsOneWidget);
   });
 }

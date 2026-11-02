@@ -305,6 +305,8 @@ class RwandaMatchService with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> refresh() => refreshData();
+
   Future<void> refreshData() async {
     await Future.delayed(const Duration(milliseconds: 500));
     _lastUpdated = DateTime.now();
